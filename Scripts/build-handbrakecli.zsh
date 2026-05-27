@@ -2,8 +2,8 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-ROOT_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
-TOOLS_DIR="$ROOT_DIR/SwiftRipTools"
+ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+TOOLS_DIR="$ROOT_DIR"
 COMMON_SCRIPT="$SCRIPT_DIR/lib/common.zsh"
 SOURCE_DIR="$TOOLS_DIR/Source"
 BUILD_DIR="$TOOLS_DIR/Build/handbrake"

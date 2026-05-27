@@ -2,11 +2,11 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-ROOT_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
+ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 SCRIPTS_DIR="$SCRIPT_DIR"
 COMMON_SCRIPT="$SCRIPT_DIR/lib/common.zsh"
 TOOLS_ARCH="${SWIFTRIP_TOOLS_ARCH:-arm64}"
-ARTIFACTS_DIR="$ROOT_DIR/SwiftRipTools/Artifacts/macos-$TOOLS_ARCH"
+ARTIFACTS_DIR="$ROOT_DIR/Artifacts/macos-$TOOLS_ARCH"
 FORCE_BUILD=0
 
 # shellcheck source=/dev/null
@@ -20,7 +20,7 @@ while [[ $# -gt 0 ]]; do
             ;;
         --arch)
             TOOLS_ARCH="${2:-}"
-            ARTIFACTS_DIR="$ROOT_DIR/SwiftRipTools/Artifacts/macos-$TOOLS_ARCH"
+            ARTIFACTS_DIR="$ROOT_DIR/Artifacts/macos-$TOOLS_ARCH"
             shift 2
             ;;
         *)

@@ -2,12 +2,12 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-ROOT_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
-TOOLS_DIR="$ROOT_DIR/SwiftRipTools"
+ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+TOOLS_DIR="$ROOT_DIR"
 COMMON_SCRIPT="$SCRIPT_DIR/lib/common.zsh"
 TOOLS_ARCH="${SWIFTRIP_TOOLS_ARCH:-arm64}"
 PACKAGE_DIR="$TOOLS_DIR/Packages"
-REPOSITORY="fahlman/SwiftRip"
+REPOSITORY="${SWIFTRIP_TOOLS_REPOSITORY:-fahlman/SwiftRipTools}"
 
 # shellcheck source=/dev/null
 source "$COMMON_SCRIPT"

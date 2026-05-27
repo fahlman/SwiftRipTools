@@ -15,24 +15,24 @@ SwiftRip.app should consume finished artifacts from this workspace rather than r
 Generated tool artifacts are intentionally not committed to Git. On a clean checkout, prepare them with:
 
 ```sh
-SwiftRipTools/Scripts/bootstrap-tools.zsh
+Scripts/bootstrap-tools.zsh
 ```
 
 The bootstrap script first verifies any existing local artifacts. If they are missing or invalid, it tries to download the pinned tool package for the selected architecture. If the package is unavailable, it falls back to building the tools locally:
 
-- `SwiftRipTools/Artifacts/macos-arm64/HandBrakeCLI`
-- `SwiftRipTools/Artifacts/macos-arm64/libdvdcss.2.dylib`
+- `Artifacts/macos-arm64/HandBrakeCLI`
+- `Artifacts/macos-arm64/libdvdcss.2.dylib`
 
 Intel artifacts can be built locally with:
 
 ```sh
-SwiftRipTools/Scripts/bootstrap-tools.zsh --arch x86_64
+Scripts/bootstrap-tools.zsh --arch x86_64
 ```
 
 Force a rebuild with:
 
 ```sh
-SwiftRipTools/Scripts/bootstrap-tools.zsh --force
+Scripts/bootstrap-tools.zsh --force
 ```
 
 ## HandBrake patching
@@ -40,7 +40,7 @@ SwiftRipTools/Scripts/bootstrap-tools.zsh --force
 SwiftRip does not fork HandBrake. App-specific changes are tracked as patch files under:
 
 ```text
-SwiftRipTools/Patches/HandBrake/
+Patches/HandBrake/
 ```
 
 `build-handbrakecli.zsh` copies those patches into the extracted HandBrake source before each build. The current `libdvdread` patch makes HandBrake load `libdvdcss.2.dylib` from:
@@ -56,7 +56,7 @@ That matches SwiftRip.app's bundle layout and avoids relying on `/usr/local/lib`
 Run:
 
 ```sh
-SwiftRipTools/Scripts/verify-swiftrip-tools.zsh
+Scripts/verify-swiftrip-tools.zsh
 ```
 
 Verification checks that the generated artifacts match the selected architecture, do not link against `/opt/local`, and that `HandBrakeCLI` contains the app-bundle `libdvdcss` loader path instead of the legacy `/usr/local/lib/libdvdcss.2.dylib` fallback.
@@ -66,21 +66,25 @@ Verification checks that the generated artifacts match the selected architecture
 After a successful local rebuild, create the downloadable tool package with:
 
 ```sh
-SwiftRipTools/Scripts/package-swiftrip-tools.zsh
+Scripts/package-swiftrip-tools.zsh
 ```
 
 For Intel:
 
 ```sh
-SwiftRipTools/Scripts/package-swiftrip-tools.zsh --arch x86_64
+Scripts/package-swiftrip-tools.zsh --arch x86_64
 ```
 
-Publish the generated file from `SwiftRipTools/Packages/` to the GitHub release URL recorded in the matching manifest under `SwiftRipTools/Manifest/`. CI verifies the manifest checksum before extracting the tools and running the full bundle integrity tests.
+Publish the generated file from `Packages/` to the GitHub release URL recorded in the matching manifest under `Manifest/`. SwiftRip CI verifies the manifest checksum before extracting the tools and running the full bundle integrity tests.
 
 Use the publish helper to either upload with GitHub CLI or open the exact release page and reveal the package in Finder:
 
 ```sh
-SwiftRipTools/Scripts/publish-swiftrip-tools.zsh
+Scripts/publish-swiftrip-tools.zsh
 ```
 
 For Intel, pass `--arch x86_64`.
+
+## SwiftRip integration
+
+SwiftRip.app keeps a small fetch script and manifest copy in its own repository so Xcode Cloud can restore the pinned packages during archive builds. This repository owns the source/build/package/publish workflow and the release assets referenced by those manifests.

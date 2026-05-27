@@ -10,6 +10,20 @@ Its job is to produce known-good, signed, app-bundled artifacts such as:
 
 SwiftRip.app should consume finished artifacts from this workspace rather than relying on Homebrew, MacPorts, /usr/local/lib, or manually installed tools.
 
+## Current package
+
+The current package set is published from:
+
+```text
+https://github.com/fahlman/SwiftRipTools/releases/tag/handbrake-1.11.1-libdvdcss-1.5.0
+```
+
+It contains:
+
+- HandBrakeCLI 1.11.1
+- libdvdcss 1.5.0
+- Apple Silicon and Intel package tarballs pinned by SHA-256 in `Manifest/`
+
 ## Contributor bootstrap
 
 Generated tool artifacts are intentionally not committed to Git. On a clean checkout, prepare them with:
@@ -61,6 +75,12 @@ Scripts/verify-swiftrip-tools.zsh
 
 Verification checks that the generated artifacts match the selected architecture, do not link against `/opt/local`, and that `HandBrakeCLI` contains the app-bundle `libdvdcss` loader path instead of the legacy `/usr/local/lib/libdvdcss.2.dylib` fallback.
 
+Run repository validation with:
+
+```sh
+Scripts/validate-repo.zsh
+```
+
 ## Packaging
 
 After a successful local rebuild, create the downloadable tool package with:
@@ -84,6 +104,12 @@ Scripts/publish-swiftrip-tools.zsh
 ```
 
 For Intel, pass `--arch x86_64`.
+
+## Source and licenses
+
+- `LICENSE` covers SwiftRipTools under GPLv2.
+- `SOURCE_OFFER.md` describes source availability and rebuild steps.
+- `THIRD_PARTY_NOTICES.md` lists the major upstream components and their licenses.
 
 ## SwiftRip integration
 

@@ -1,0 +1,30 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  validate:
+    name: Validate and Fetch Packages
+    runs-on: macos-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Show Xcode version
+        run: xcodebuild -version
+
+      - name: Validate repository
+        run: Scripts/validate-repo.zsh
+
+      - name: Fetch Apple Silicon package
+        run: Scripts/fetch-swiftrip-tools.zsh --arch arm64
+
+      - name: Fetch Intel package
+        run: Scripts/fetch-swiftrip-tools.zsh --arch x86_64

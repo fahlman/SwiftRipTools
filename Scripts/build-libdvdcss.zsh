@@ -11,10 +11,10 @@ TOOLS_ARCH="${SWIFTRIP_TOOLS_ARCH:-arm64}"
 ARTIFACTS_DIR="$TOOLS_DIR/Artifacts/macos-$TOOLS_ARCH"
 
 LIBDVDCSS_VERSION="1.5.0"
-LIBDVDCSS_ARCHIVE="libdvdcss-${LIBDVDCSS_VERSION}.tar.xz"
-LIBDVDCSS_SOURCE_DIR="$SOURCE_DIR/libdvdcss-${LIBDVDCSS_VERSION}"
-LIBDVDCSS_URL="https://get.videolan.org/libdvdcss/${LIBDVDCSS_VERSION}/${LIBDVDCSS_ARCHIVE}"
-LIBDVDCSS_SHA256="529463e4d1befef82e5c6e470db7661a2db0343e092a2fb0d6c037cab8a5c399"
+LIBDVDCSS_REPOSITORY_URL="https://github.com/fahlman/SwiftRip-libdvdcss.git"
+LIBDVDCSS_SWIFTRIP_TAG="swiftrip-libdvdcss-${LIBDVDCSS_VERSION}"
+LIBDVDCSS_SWIFTRIP_COMMIT="c838ca97553aeb8505b7baf02b9a90f8505de212"
+LIBDVDCSS_SOURCE_DIR="$SOURCE_DIR/libdvdcss-${LIBDVDCSS_VERSION}-swiftrip"
 
 ARCH_PREFIX="$BUILD_DIR/$TOOLS_ARCH-prefix"
 
@@ -30,9 +30,11 @@ echo "Source:    $SOURCE_DIR"
 echo "Build:     $BUILD_DIR"
 echo "Artifacts: $ARTIFACTS_DIR"
 echo "Version:   $LIBDVDCSS_VERSION"
+echo "Source tag: $LIBDVDCSS_SWIFTRIP_TAG"
 echo "Arch:      $TOOLS_ARCH"
 
 assert_supported_tools_arch "$TOOLS_ARCH" "libdvdcss"
+require_command git
 
 mkdir -p "$SOURCE_DIR"
 mkdir -p "$BUILD_DIR"
@@ -40,27 +42,33 @@ mkdir -p "$ARTIFACTS_DIR"
 
 cd "$SOURCE_DIR"
 
-if [[ ! -f "$LIBDVDCSS_ARCHIVE" ]]; then
-    echo "Downloading $LIBDVDCSS_ARCHIVE from VideoLAN..."
-    curl -fL "$LIBDVDCSS_URL" -o "$LIBDVDCSS_ARCHIVE"
-else
-    echo "Using existing archive: $SOURCE_DIR/$LIBDVDCSS_ARCHIVE"
-fi
-
-echo "Verifying $LIBDVDCSS_ARCHIVE checksum..."
-ACTUAL_LIBDVDCSS_SHA256="$(sha256_file "$LIBDVDCSS_ARCHIVE")"
-if [[ "$ACTUAL_LIBDVDCSS_SHA256" != "$LIBDVDCSS_SHA256" ]]; then
-    echo "ERROR: $LIBDVDCSS_ARCHIVE checksum mismatch."
-    echo "Expected: $LIBDVDCSS_SHA256"
-    echo "Actual:   $ACTUAL_LIBDVDCSS_SHA256"
-    exit 1
-fi
-
-if [[ ! -d "$LIBDVDCSS_SOURCE_DIR" ]]; then
-    echo "Extracting $LIBDVDCSS_ARCHIVE..."
-    tar -xJf "$LIBDVDCSS_ARCHIVE"
-else
+if [[ -d "$LIBDVDCSS_SOURCE_DIR/.git" ]]; then
     echo "Using existing source: $LIBDVDCSS_SOURCE_DIR"
+    ACTUAL_LIBDVDCSS_COMMIT="$(git -C "$LIBDVDCSS_SOURCE_DIR" rev-parse HEAD)"
+    if [[ "$ACTUAL_LIBDVDCSS_COMMIT" != "$LIBDVDCSS_SWIFTRIP_COMMIT" ]]; then
+        echo "Existing libdvdcss source is not the pinned SwiftRip revision; refreshing..."
+        rm -rf "$LIBDVDCSS_SOURCE_DIR"
+    fi
+elif [[ -e "$LIBDVDCSS_SOURCE_DIR" ]]; then
+    echo "Removing non-Git libdvdcss source directory: $LIBDVDCSS_SOURCE_DIR"
+    rm -rf "$LIBDVDCSS_SOURCE_DIR"
+fi
+
+if [[ ! -d "$LIBDVDCSS_SOURCE_DIR/.git" ]]; then
+    echo "Cloning SwiftRip libdvdcss source..."
+    git clone \
+      --depth 1 \
+      --branch "$LIBDVDCSS_SWIFTRIP_TAG" \
+      "$LIBDVDCSS_REPOSITORY_URL" \
+      "$LIBDVDCSS_SOURCE_DIR"
+fi
+
+ACTUAL_LIBDVDCSS_COMMIT="$(git -C "$LIBDVDCSS_SOURCE_DIR" rev-parse HEAD)"
+if [[ "$ACTUAL_LIBDVDCSS_COMMIT" != "$LIBDVDCSS_SWIFTRIP_COMMIT" ]]; then
+    echo "ERROR: SwiftRip libdvdcss source revision mismatch."
+    echo "Expected: $LIBDVDCSS_SWIFTRIP_COMMIT"
+    echo "Actual:   $ACTUAL_LIBDVDCSS_COMMIT"
+    exit 1
 fi
 
 if [[ -z "$MESON_CMD" ]]; then
@@ -82,7 +90,7 @@ if [[ -z "$NINJA_CMD" ]]; then
 fi
 
 if [[ ! -f "$LIBDVDCSS_SOURCE_DIR/meson.build" ]]; then
-    echo "Expected VideoLAN libdvdcss source to contain meson.build, but it was not found." >&2
+    echo "Expected SwiftRip libdvdcss source to contain meson.build, but it was not found." >&2
     echo "Source directory: $LIBDVDCSS_SOURCE_DIR" >&2
     exit 1
 fi

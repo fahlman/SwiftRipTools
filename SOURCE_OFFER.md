@@ -19,16 +19,16 @@ It includes build scripts, package manifests, source provenance, and documentati
 SwiftRip-Tools currently builds:
 
 - HandBrakeCLI from the SwiftRip-HandBrake fork tag `swiftrip-handbrake-1.11.1`
-- libdvdcss from VideoLAN source release `1.5.0`
+- libdvdcss from the SwiftRip-libdvdcss source tag `swiftrip-libdvdcss-1.5.0`
 
-The exact upstream URLs, fork commit pins, and SHA-256 checksums are recorded in:
+The exact upstream URLs, SwiftRip source tags, and commit pins are recorded in:
 
 ```text
 Scripts/build-handbrakecli.zsh
 Scripts/build-libdvdcss.zsh
 ```
 
-Generated source archives, extracted source trees, build folders, binary artifacts, and package tarballs are intentionally not committed to Git. They are reproduced locally by the build scripts or downloaded from the pinned GitHub release assets referenced by `Manifest/`.
+Generated source checkouts, build folders, binary artifacts, and package tarballs are intentionally not committed to Git. They are reproduced locally by the build scripts or downloaded from the pinned GitHub release assets referenced by `Manifest/`.
 
 ## HandBrake Fork
 
@@ -39,6 +39,16 @@ https://github.com/fahlman/SwiftRip-HandBrake/tree/swiftrip-handbrake-1.11.1
 ```
 
 That tag is pinned by commit hash in `Scripts/build-handbrakecli.zsh`. The fork patch adjusts HandBrake's libdvdread contribution so the bundled `HandBrakeCLI` can load `libdvdcss.2.dylib` from SwiftRip.app's `Contents/Frameworks` directory instead of relying on `/usr/local/lib`.
+
+## libdvdcss Source Pin
+
+SwiftRip's libdvdcss source pin is tracked in:
+
+```text
+https://github.com/fahlman/SwiftRip-libdvdcss/tree/swiftrip-libdvdcss-1.5.0
+```
+
+That tag points at VideoLAN's upstream libdvdcss 1.5.0 commit `c838ca97553aeb8505b7baf02b9a90f8505de212` and is pinned by commit hash in `Scripts/build-libdvdcss.zsh`.
 
 ## Rebuilding
 

@@ -104,8 +104,9 @@ SwiftRip-Tools found upstream component versions that should be reviewed.
 
 ## Review checklist
 
-- Update the pinned version, commit, or SHA-256 in the matching build script.
+- Update the pinned version or commit in the matching build script.
 - Sync the SwiftRip-HandBrake fork and create a new pinned fork tag if HandBrake changed.
+- Sync the SwiftRip-libdvdcss source repo and create a new pinned source tag if libdvdcss changed.
 - Rebuild and verify the Apple Silicon package.
 - Rebuild and verify the Intel package.
 - Publish replacement SwiftRip-Tools release assets.

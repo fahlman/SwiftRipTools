@@ -65,6 +65,22 @@ That tag starts from upstream HandBrake 1.11.1 and contains SwiftRip's app-speci
 
 That matches SwiftRip.app's bundle layout and avoids relying on `/usr/local/lib`.
 
+## libdvdcss source pin
+
+SwiftRip builds libdvdcss from this pinned source tag:
+
+```text
+https://github.com/fahlman/SwiftRip-libdvdcss/tree/swiftrip-libdvdcss-1.5.0
+```
+
+That tag points at VideoLAN's upstream libdvdcss 1.5.0 commit:
+
+```text
+c838ca97553aeb8505b7baf02b9a90f8505de212
+```
+
+The build script verifies that exact commit before building `libdvdcss.2.dylib`.
+
 ## Verification
 
 Run:
